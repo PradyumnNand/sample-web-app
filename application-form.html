@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Form</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: #1a1a2e;
+    }
+
+    /* ── FORM PAGE ── */
+    #form-page {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 2.5rem 2.5rem 2rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    #form-page h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: #1a1a2e;
+    }
+
+    #form-page p.subtitle {
+      font-size: 0.88rem;
+      color: #6b7280;
+      margin-bottom: 1.8rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.2rem;
+    }
+
+    .field label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #374151;
+      margin-bottom: 0.4rem;
+    }
+
+    .field input,
+    .field textarea {
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.97rem;
+      font-family: inherit;
+      color: #1a1a2e;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+    }
+
+    .field input.error,
+    .field textarea.error {
+      border-color: #ef4444;
+    }
+
+    .field .err-msg {
+      font-size: 0.78rem;
+      color: #ef4444;
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    .field .err-msg.visible { display: block; }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.75rem;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    button[type="submit"]:hover { background: #4338ca; }
+
+    /* ── APPLICATION PAGE ── */
+    #app-page {
+      display: none;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 620px;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #4f46e5;
+      padding-bottom: 1rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .app-header-left h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #4f46e5;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .app-header-left p {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 0.15rem;
+    }
+
+    .app-id {
+      text-align: right;
+      font-size: 0.78rem;
+      color: #6b7280;
+    }
+
+    .app-id span {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      font-family: monospace;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #4f46e5;
+      margin-bottom: 0.8rem;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 2rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .app-field label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9ca3af;
+      margin-bottom: 0.2rem;
+    }
+
+    .app-field .value {
+      font-size: 0.97rem;
+      color: #1a1a2e;
+      font-weight: 500;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.3rem;
+      min-height: 1.6rem;
+      word-break: break-word;
+    }
+
+    .app-field.full { grid-column: 1 / -1; }
+
+    .status-badge {
+      display: inline-block;
+      background: #dcfce7;
+      color: #16a34a;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1.6rem;
+    }
+
+    .app-footer {
+      border-top: 1px solid #e5e7eb;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+
+    .app-footer .submitted-on { font-style: italic; }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-print {
+      flex: 1;
+      padding: 0.65rem;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-print:hover { background: #4338ca; }
+
+    .btn-back {
+      flex: 1;
+      padding: 0.65rem;
+      background: #fff;
+      color: #4f46e5;
+      border: 2px solid #4f46e5;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-back:hover { background: #eef2ff; }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+        display: block;
+      }
+
+      #form-page { display: none !important; }
+
+      #app-page {
+        display: block !important;
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+        padding: 1.5cm 2cm;
+      }
+
+      .action-buttons { display: none; }
+
+      .app-header { border-bottom-color: #000; }
+      .app-header-left h2 { color: #000; }
+      .section-title { color: #000; }
+
+      .app-field .value { border-bottom-color: #000; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FORM PAGE -->
+  <div id="form-page">
+    <h1>Application Form</h1>
+    <p class="subtitle">Please fill in all fields below to submit your application.</p>
+
+    <form id="appForm" novalidate>
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="e.g. Jane Smith" autocomplete="name">
+        <span class="err-msg" id="name-err">Please enter your full name (letters only).</span>
+      </div>
+
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="e.g. jane@example.com" autocomplete="email">
+        <span class="err-msg" id="email-err">Please enter a valid email address.</span>
+      </div>
+
+      <div class="field">
+        <label for="age">Age</label>
+        <input type="number" id="age" placeholder="e.g. 28" min="1" max="120" autocomplete="off">
+        <span class="err-msg" id="age-err">Please enter a valid age (1-120).</span>
+      </div>
+
+      <div class="field">
+        <label for="address">Address</label>
+        <textarea id="address" rows="3" placeholder="Street, City, State, ZIP" autocomplete="street-address"></textarea>
+        <span class="err-msg" id="address-err">Please enter your address.</span>
+      </div>
+
+      <button type="submit">Submit Application</button>
+    </form>
+  </div>
+
+  <!-- APPLICATION PAGE -->
+  <div id="app-page">
+    <div class="app-header">
+      <div class="app-header-left">
+        <h2>Application</h2>
+        <p>Personal Information Record</p>
+      </div>
+      <div class="app-id">
+        Reference No.
+        <span id="ref-no"></span>
+      </div>
+    </div>
+
+    <span class="status-badge">&#10003; Submitted</span>
+
+    <p class="section-title">Applicant Details</p>
+
+    <div class="fields-grid">
+      <div class="app-field">
+        <label>Full Name</label>
+        <div class="value" id="out-name"></div>
+      </div>
+
+      <div class="app-field">
+        <label>Age</label>
+        <div class="value" id="out-age"></div>
+      </div>
+
+      <div class="app-field">
+        <label>Email Address</label>
+        <div class="value" id="out-email"></div>
+      </div>
+
+      <div class="app-field full">
+        <label>Address</label>
+        <div class="value" id="out-address"></div>
+      </div>
+    </div>
+
+    <div class="app-footer">
+      <span class="submitted-on" id="submitted-on"></span>
+      <span>Form v1.0</span>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-back" id="btn-back">&#8592; Edit Details</button>
+      <button class="btn-print" onclick="window.print()">&#128438; Print Application</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('appForm');
+
+    function validateField(id, check) {
+      const el = document.getElementById(id);
+      const err = document.getElementById(id + '-err');
+      const ok = check(el.value.trim());
+      el.classList.toggle('error', !ok);
+      err.classList.toggle('visible', !ok);
+      return ok;
+    }
+
+    function isEmail(v) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const nameOk    = validateField('name',    v => v.length > 0 && /^[A-Za-z\s'\-]+$/.test(v));
+      const emailOk   = validateField('email',   v => isEmail(v));
+      const ageOk     = validateField('age',     v => v !== '' && +v >= 1 && +v <= 120);
+      const addressOk = validateField('address', v => v.length > 0);
+
+      if (!nameOk || !emailOk || !ageOk || !addressOk) return;
+
+      document.getElementById('out-name').textContent    = document.getElementById('name').value.trim();
+      document.getElementById('out-email').textContent   = document.getElementById('email').value.trim();
+      document.getElementById('out-age').textContent     = document.getElementById('age').value.trim() + ' years';
+      document.getElementById('out-address').textContent = document.getElementById('address').value.trim();
+
+      const refNo = 'APP-' + Date.now().toString(36).toUpperCase();
+      document.getElementById('ref-no').textContent = refNo;
+
+      const now = new Date();
+      document.getElementById('submitted-on').textContent =
+        'Submitted on ' + now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) +
+        ' at ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      document.getElementById('form-page').style.display = 'none';
+      document.getElementById('app-page').style.display  = 'block';
+    });
+
+    document.getElementById('btn-back').addEventListener('click', function () {
+      document.getElementById('app-page').style.display  = 'none';
+      document.getElementById('form-page').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
